@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -15,11 +15,11 @@ jobs:
       - name: Build Docker image
         run: docker build -t devops-app .
 
-      - name: Run container test
-         run: docker run -d -p 5000:5000 --name test-container devops-app
+      - name: Run container
+        run: docker run -d -p 5000:5000 --name test-container devops-app
 
       - name: Wait for app
-         run: sleep 5
+        run: sleep 5
 
       - name: Test API
-         run: curl http://localhost:5000
+        run: curl http://localhost:5000
