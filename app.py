@@ -2,6 +2,10 @@ from flask import Flask
 
 app = Flask(__name__)
 
+@app.route("/health")
+def health():
+    return {"status": "ok"}, 200
+
 @app.route("/")
 def hello():
     return "Hello DevOps 👋"
