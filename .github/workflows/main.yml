@@ -23,5 +23,5 @@ jobs:
 
       - name: Test API
         run: |
-          curl http://localhost:5000
-          curl http://localhost:5000/health
+          curl -f http://localhost:5000
+          curl -f http://localhost:5000/health
