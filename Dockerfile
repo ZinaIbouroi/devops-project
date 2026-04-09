@@ -7,3 +7,5 @@ COPY . .
 RUN pip install -r requirements.txt
 
 CMD ["python", "app.py"]
+
+ENV APP_MESSAGE="Hello from Dockerfile 🚀"
