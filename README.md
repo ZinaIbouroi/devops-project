@@ -1,11 +1,14 @@
 # DevOps CI/CD Project 🚀
 
 ## 📌 Overview
-This project demonstrates a simple DevOps pipeline:
-- A Flask web application
-- Containerization with Docker
-- CI/CD pipeline using GitHub Actions
+This project demonstrates a production-like DevOps workflow:
+- Flask web application
+- Docker containerization
+- CI/CD pipeline with GitHub Actions
 - Automated API testing
+- Environment variable configuration
+- Healthcheck endpoint
+- Docker image published on Docker Hub
 
 ---
 
@@ -18,54 +21,80 @@ This project demonstrates a simple DevOps pipeline:
 
 ## 🚀 Run locally
 
-### 1. Build Docker image
+### Build Docker image
 ```bash
 docker build -t devops-app .
 ```
 
-### 2. Run container
+### Run container
 ```bash
 docker run -p 5000:5000 devops-app
 ```
 
-### 3. Access the app
-Open in your browser:  
+### With environment variable
+```bash
+docker run -p 5000:5000 -e APP_MESSAGE="Hello from Docker 🚀" devops-app
+```
+
+### Access the app
 http://localhost:5000
+
+---
+
+## 🩺 Healthcheck
+```bash
+curl http://localhost:5000/health
+```
+
+Expected response:
+```
+{"status": "ok"}
+```
 
 ---
 
 ## 🔄 CI/CD Pipeline
 
-The pipeline is triggered on every push to the main branch.
+Triggered on every push to `main`.
 
 ### Steps:
 - Build Docker image
 - Run container
-- Wait for application startup
-- Test API using curl
+- Test endpoints:
+  - `/`
+  - `/health`
 
 ---
 
-## 🧪 Automated Test
-
-The pipeline verifies the application by sending a request:
+## 🧪 Automated Tests
 
 ```bash
 curl http://localhost:5000
+curl http://localhost:5000/health
 ```
 
-Expected response:
-```
-Hello DevOps 👋
+---
+
+## 🐳 Docker Hub
+
+Image available here:
+
+👉 https://hub.docker.com/r/izh0407/devops-app
+
+Run directly:
+
+```bash
+docker run -p 5000:5000 izh0407/devops-app:latest
 ```
 
 ---
 
 ## 📈 Key Learnings
-- Containerizing an application with Docker
-- Setting up a CI/CD pipeline using GitHub Actions
-- Automating application testing
-- Understanding deployment workflow basics
+- Containerizing applications with Docker
+- Building CI/CD pipelines with GitHub Actions
+- Using environment variables for configuration
+- Implementing healthcheck endpoints
+- Publishing Docker images to a registry
 
 ---
 
@@ -82,6 +111,6 @@ Hello DevOps 👋
 ---
 
 ## 🔗 Future Improvements
-- Push Docker image to Docker Hub
-- Deploy to a cloud provider (AWS / Azure)
 - Add unit tests
+- Deploy to cloud (AWS / Azure)
+- Use infrastructure as code (Terraform)
