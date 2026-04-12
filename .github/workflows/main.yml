@@ -18,6 +18,9 @@ jobs:
       - name: Run tests
         run: pytest
 
+      - name: Security scan
+        run: pip-audit
+
       - name: Build Docker image
         run: docker build -t devops-app .
 
