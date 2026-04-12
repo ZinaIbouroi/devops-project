@@ -11,6 +11,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+tasks = []
 
 @app.route("/health")
 def health():
@@ -18,10 +19,17 @@ def health():
     return {"status": "ok"}, 200
 
 @app.route("/")
-def hello():
-    message = os.getenv("APP_MESSAGE", "Hello DevOps 👋")
+def home():
     logger.info("Home endpoint called")
-    return message
+    return {
+        "message": "Task Manager API",
+        "endpoints": [
+            "/tasks",
+            "/tasks (POST)",
+            "/tasks/<id> (DELETE)",
+            "/health"
+        ]
+    }
 
 @app.route("/info")
 def info():
@@ -45,6 +53,43 @@ def echo():
     return jsonify({
         "received": data
     })
+
+@app.route("/tasks", methods=["POST"])
+def add_task():
+    data = request.get_json(silent=True)
+
+    if not data or "title" not in data:
+        logger.warning("Invalid task creation attempt")
+        return {"error": "Title is required"}, 400
+
+    task = {
+        "id": len(tasks) + 1,
+        "title": data["title"]
+    }
+
+    tasks.append(task)
+    logger.info(f"Task added: {task}")
+
+    return task, 201
+
+@app.route("/tasks", methods=["GET"])
+def get_tasks():
+    logger.info(f"Fetching tasks: {len(tasks)} tasks")
+    return tasks
+
+@app.route("/tasks/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    global tasks
+
+    initial_len = len(tasks)
+    tasks = [t for t in tasks if t["id"] != task_id]
+
+    if len(tasks) == initial_len:
+        logger.warning(f"Task not found: {task_id}")
+        return {"error": "Task not found"}, 404
+
+    logger.info(f"Task deleted: {task_id}")
+    return {"message": "Task deleted"}
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

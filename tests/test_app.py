@@ -21,3 +21,13 @@ def test_echo():
     response = client.post("/echo", json={"message": "hello"})
     assert response.status_code == 200
     assert response.json["received"]["message"] == "hello"
+
+def test_add_task():
+    client = app.test_client()
+    response = client.post("/tasks", json={"title": "Test"})
+    assert response.status_code == 201
+
+def test_get_tasks():
+    client = app.test_client()
+    response = client.get("/tasks")
+    assert response.status_code == 200
