@@ -1,7 +1,7 @@
-# DevOps CI/CD Project 🚀 (Docker, CI/CD & Cloud Deployment on Render)
+# DevOps CI/CD Project 🚀 (Task Manager API with UI, Docker & Cloud Deployment)
 
 ## 🌐 Live Demo
-👉https://devops-app-7704.onrender.com
+👉 https://devops-app-7704.onrender.com
 
 ### Healthcheck
 👉 https://devops-app-7704.onrender.com/health
@@ -9,13 +9,16 @@
 ---
 
 ## 📌 Overview
-This project demonstrates a production-like DevOps workflow:
-- Flask web application
+This project demonstrates a production-like DevOps workflow applied to a real application:
+
+- Task Manager API (Flask)
+- Web UI for interacting with the API
 - Docker containerization
 - CI/CD pipeline with GitHub Actions
 - Automated API testing with status code validation
 - Dependency security scanning using pip-audit
 - Environment variable configuration
+- Application logging for observability
 - Healthcheck endpoint
 - Docker image published on Docker Hub
 - Deployed on Render (cloud platform)
@@ -28,6 +31,33 @@ This project demonstrates a production-like DevOps workflow:
 - GitHub Actions
 - Gunicorn
 - Render (Cloud)
+- HTML / JavaScript (UI)
+
+---
+
+## 🚀 Application Features
+
+### 📝 Task Management
+- Add tasks
+- List tasks
+- Delete tasks
+
+### 🌐 Web Interface
+- User-friendly UI accessible at `/`
+- Dynamic updates (fetch API)
+- Table display of tasks
+- Delete actions directly from UI
+
+### 📡 API Endpoints
+
+| Method | Endpoint | Description |
+|-------|--------|------------|
+| GET | `/` | Web UI |
+| GET | `/tasks` | List all tasks |
+| POST | `/tasks` | Create a task |
+| DELETE | `/tasks/<id>` | Delete a task |
+| GET | `/health` | Healthcheck |
+| GET | `/info` | App metadata |
 
 ---
 
@@ -49,18 +79,16 @@ docker run -p 5000:5000 -e APP_MESSAGE="Hello from Docker 🚀" devops-app
 ```
 
 ### Access the app
-http://localhost:5000
+👉 http://localhost:5000
 
 ---
 
-## 🩺 Healthcheck
-```bash
-curl http://localhost:5000/health
-```
+## 🧪 Automated Tests
 
-Expected response:
-```
-{"status": "ok"}
+Run tests locally:
+
+```bash
+PYTHONPATH=. pytest
 ```
 
 ---
@@ -69,29 +97,19 @@ Expected response:
 
 Triggered on every push to `main`.
 
-### Steps:
+### Pipeline steps:
 - Install dependencies
 - Run unit tests (pytest)
-- Security scan with pip-audit
+- Security scan (pip-audit)
 - Build Docker image
 - Run container
-- Test endpoints:
-  - `/`
-  - `/health`
-
----
-
-## 🧪 Automated Tests
-
-```bash
-PYTHONPATH=. pytest
-```
+- Test API endpoints (`/`, `/health`, `/tasks`)
 
 ---
 
 ## 🔐 Security
 
-The project integrates dependency vulnerability scanning using:
+Dependency vulnerability scanning is implemented using:
 
 ```bash
 pip-audit
@@ -126,10 +144,7 @@ The application is deployed using:
 The service is automatically deployed from the GitHub repository.
 
 👉 Live URL:
-https://devops-app-7704.onrender.com
-
-Healthcheck:
-https://devops-app-7704.onrender.com/health
+https://TON-APP.onrender.com
 
 ---
 
@@ -137,18 +152,19 @@ https://devops-app-7704.onrender.com/health
 
 | Variable | Description | Default |
 |----------|------------|--------|
-| APP_MESSAGE | Message displayed on homepage | Hello DevOps 👋 |
+| APP_MESSAGE | Application message | Hello DevOps 👋 |
 
 ---
 
 ## 📈 Key Learnings
+- Building REST APIs with Flask
+- Designing a simple fullstack application (API + UI)
 - Containerizing applications with Docker
-- Building CI/CD pipelines with GitHub Actions
-- Writing and integrating unit tests (pytest)
-- Implementing API healthchecks
+- Implementing CI/CD pipelines with GitHub Actions
+- Writing unit tests with pytest
+- Integrating security scanning (pip-audit)
 - Managing environment variables
-- Performing dependency security scanning
-- Publishing Docker images to a registry
+- Implementing application logging
 - Deploying applications to the cloud (Render)
 
 ---
@@ -162,6 +178,8 @@ https://devops-app-7704.onrender.com/health
 ├── requirements.txt
 ├── pytest.ini
 ├── .dockerignore
+├── templates/
+│   └── ui.html
 ├── tests/
 │   └── test_app.py
 └── .github/
@@ -172,7 +190,8 @@ https://devops-app-7704.onrender.com/health
 ---
 
 ## 🔗 Future Improvements
-- Add integration tests
-- Improve security scanning (SAST/DAST)
-- Deploy with Infrastructure as Code (Terraform)
-- Add monitoring and logging
+- Add database (PostgreSQL)
+- Add authentication (JWT)
+- Improve UI/UX
+- Add monitoring and metrics
+- Infrastructure as Code (Terraform)
