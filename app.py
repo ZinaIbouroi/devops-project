@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import os
 import datetime
 import logging
@@ -13,13 +13,17 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 tasks = []
 
+@app.route("/")
+def home():
+    return render_template("ui.html")
+
 @app.route("/health")
 def health():
     logger.info("Healthcheck OK")
     return {"status": "ok"}, 200
 
-@app.route("/")
-def home():
+@app.route("/endpoint_home")
+def endpoint_home():
     logger.info("Home endpoint called")
     return {
         "message": "Task Manager API",
