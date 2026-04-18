@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify, render_template
+from flask_sqlalchemy import SQLAlchemy
+from prometheus_client import Counter, generate_latest
 import os
 import datetime
 import logging
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -11,7 +14,21 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+REQUEST_COUNT = Counter('app_requests_total', 'Total requests')
+
+@app.before_request
+def count_requests():
+    REQUEST_COUNT.inc()
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
+db = SQLAlchemy(app)
+
 tasks = []
+
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
 
 @app.route("/")
 def home():
@@ -60,42 +77,54 @@ def echo():
 
 @app.route("/tasks", methods=["POST"])
 def add_task():
+    logger.info("Add task request received")
     data = request.get_json(silent=True)
 
     if not data or "title" not in data:
         logger.warning("Invalid task creation attempt")
         return {"error": "Title is required"}, 400
 
-    task = {
-        "id": len(tasks) + 1,
-        "title": data["title"]
-    }
+    task = Task(title=data["title"])
+    db.session.add(task)
+    db.session.commit()
+    logger.info(f"Task created with id={task.id}")
 
-    tasks.append(task)
-    logger.info(f"Task added: {task}")
-
-    return task, 201
+    return {"id": task.id, "title": task.title}, 201
 
 @app.route("/tasks", methods=["GET"])
 def get_tasks():
-    logger.info(f"Fetching tasks: {len(tasks)} tasks")
-    return tasks
+    logger.info("Fetching tasks from DB")
+    tasks = Task.query.all()
+
+    logger.info(f"{len(tasks)} tasks retrieved")
+
+    return [{"id": t.id, "title": t.title} for t in tasks]
 
 @app.route("/tasks/<int:task_id>", methods=["DELETE"])
 def delete_task(task_id):
-    global tasks
+    logger.info(f"Delete request for task id={task_id}")
+    
+    task = Task.query.get(task_id)
 
-    initial_len = len(tasks)
-    tasks = [t for t in tasks if t["id"] != task_id]
-
-    if len(tasks) == initial_len:
-        logger.warning(f"Task not found: {task_id}")
+    if not task:
+        logger.warning(f"Task not found: id={task_id}")
         return {"error": "Task not found"}, 404
 
-    logger.info(f"Task deleted: {task_id}")
+    db.session.delete(task)
+    db.session.commit()
+
+    logger.info(f"Task deleted: id={task_id}")
+
     return {"message": "Task deleted"}
 
+@app.route("/metrics")
+def metrics():
+    logger.info("Metrics endpoint accessed")
+    return generate_latest(), 200, {'Content-Type': 'text/plain'}
+    
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
+
     

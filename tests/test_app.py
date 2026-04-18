@@ -1,5 +1,16 @@
-from app import app
+from app import app, db
+import pytest
 
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+
+    with app.app_context():
+        db.create_all()
+        yield app.test_client()
+        db.drop_all()
+        
 def test_home():
     client = app.test_client()
     response = client.get("/")
