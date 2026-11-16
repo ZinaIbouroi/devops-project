@@ -144,7 +144,7 @@ The application is deployed using:
 The service is automatically deployed from the GitHub repository.
 
 👉 Live URL:
-https://TON-APP.onrender.com
+https://devops-app-7704.onrender.com
 
 ---
 
